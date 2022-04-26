@@ -1,0 +1,23 @@
+FILTERS in jinja
+
+striptags - remove html code from passing data
+safe - pass html code
+upper 
+lower
+trim 
+capitalize 
+title 
+
+
+call array by number
+
+arr.0 arr.1
+
+
+
+// GIT cmd to initialize project
+$ git config --global user.name "Your Name"
+$ git config --global user.email "you@youraddress.com"
+$ git config --global push.default matching
+$ git config --global alias.co checkout
+$ git init
