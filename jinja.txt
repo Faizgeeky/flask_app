@@ -21,3 +21,14 @@ $ git config --global user.email "you@youraddress.com"
 $ git config --global push.default matching
 $ git config --global alias.co checkout
 $ git init
+
+
+
+// Templating 
+--  Navbar 
+-- create base.html include navbar {% include 'navbar.html %}
+
+-- use base.html in all pages you want 
+   {% extend 'base.html' %}
+   {% block content %}
+   {% endblock %}

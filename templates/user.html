@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <h1 style="color: orange">Hello {{ name|upper }}!</h1>
+    <form method="get" onsubmit="/register">
+        
+        <input type="text" id="id" name="id">
+        <br>
+        <input type="text" id="name" name="name">
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- <h1>Hello World</h1> -->
+{% endblock %}
+

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static',filename='style.css') }}" rel="stylesheet">
+
+{% with messages = get_flashed_messages() %}  
+{% if messages %}  
+      {% for message in messages %}  
+      <div class="alert alert-success" role="alert">
+        {{ message }}
+      </div>
+           
+      {% endfor %}  
+{% endif %}  
+{% endwith %} 
+
+
+
+
+  
+    <div class="shadow p-3 mb-5 bg-white rounded">Update User</div>
+         <form method="POST">
+            
+             {{ form.hidden_tag() }}
+             {{ form.name.label(class="form-label") }}
+             {{ form.name(class="form-control", value= data_update.name) }}
+             <br>
+             {{ form.email.label(class="form-label") }}
+             {{ form.email(class="form-control", value = data_update.email) }}
+
+             <br/>
+             {{form.submit(class="btn btn-primary") }}
+         </form>
+
+    
+
+
+    <!-- <form method="get" onsubmit="/register">
+        
+        <input type="text" id="id" name="id">
+        <br>
+        <input type="text" id="name" name="name">
+        <button type="submit">Submit</button>
+    </form> -->
+
+    <!-- <h1>Hello World</h1> -->
+
+{% endblock %}
+

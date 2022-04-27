@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="{{ url_for('static',filename='style.css') }}" rel="stylesheet">
+
+{% with messages = get_flashed_messages() %}  
+{% if messages %}  
+      {% for message in messages %}  
+      <div class="alert alert-success" role="alert">
+        {{ message }}
+      </div>
+           
+      {% endfor %}  
+{% endif %}  
+{% endwith %} 
+
+
+
+
+    {% if name   %}
+
+    <h1  id="name1" name="name1">Hello {{ name|upper }}!</h1>
+    <!-- <h1  id="name1" name="name1">Hello {{ email|upper }}!</h1> -->
+
+
+    {% else %}
+    <div class="shadow p-3 mb-5 bg-white rounded">Add User</div>
+         <form method="POST">
+            
+             {{ form.hidden_tag() }}
+             {{ form.name.label(class="form-label") }}
+             {{ form.name(class="form-control") }}
+             <br>
+             {{ form.email.label(class="form-label") }}
+             {{ form.email(class="form-control") }}
+
+             <br/>
+             {{form.submit(class="btn btn-primary") }}
+         </form>
+
+    {% endif %}
+
+
+    <!-- <form method="get" onsubmit="/register">
+        
+        <input type="text" id="id" name="id">
+        <br>
+        <input type="text" id="name" name="name">
+        <button type="submit">Submit</button>
+    </form> -->
+
+    <!-- <h1>Hello World</h1> -->
+    
+    <div class="shadow p-3 mb-5 bg-white rounded">User List</div>
+
+    <table class="table table-dark">
+        <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+            </tr>
+          </thead>
+        {% for user in all_users %}
+        <tr>
+            <th scope="row">{{ user.id }}</th>
+            <td><a href="{{ url_for('update',id = user.id) }}">{{ user.name }}</a></td>
+            <td> {{ user.email }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}
+

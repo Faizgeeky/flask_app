@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-</head>
-<body>
-    <h1 style="color: orange">Hello {{ u_name|upper }}!</h1>
-    <form method="get" onsubmit="/register">
-        
-        <input type="text" id="id" name="id">
-        <br>
-        <input type="text" id="name" name="name">
-        <button type="submit">Submit</button>
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    
+<br><br>
+    <h1>Welcome to WebApp Future of the Future.</h1>
+{% endblock %}
+
