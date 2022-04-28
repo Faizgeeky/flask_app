@@ -25,17 +25,10 @@
 
     {% else %}
     <div class="shadow p-3 mb-5 bg-white rounded">Add User</div>
-         <form method="POST">
-            
-             {{ form.hidden_tag() }}
-             {{ form.name.label(class="form-label") }}
-             {{ form.name(class="form-control") }}
-             <br>
-             {{ form.email.label(class="form-label") }}
-             {{ form.email(class="form-control") }}
-
-             <br/>
-             {{form.submit(class="btn btn-primary") }}
+         <form action="{{ url_for('user_update') }}" method="POST" >
+            <input type="text" value="name" name="name" id="name" class="form-label">
+            <input type="text" value="emal" name="email" id="email" class="form-label">
+            <button type="submit">Submit</button>
          </form>
 
     {% endif %}
@@ -53,7 +46,7 @@
     
     <div class="shadow p-3 mb-5 bg-white rounded">User List</div>
 
-    <table class="table table-dark">
+    <!-- <table class="table table-dark">
         <thead>
             <tr>
               <th scope="col">ID</th>
@@ -66,10 +59,9 @@
             <th scope="row">{{ user.id }}</th>
             <td><a href="{{ url_for('update',id = user.id) }}">{{ user.name }}</a></td>
             <td> {{ user.email }}</td>
-            <td><a href="{{ url_for('delete',id = user.id) }}">Delete</a></td>
         </tr>
         {% endfor %}
 
-    </table>
+    </table> -->
 {% endblock %}
 

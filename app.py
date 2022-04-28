@@ -1,11 +1,13 @@
 from datetime import datetime
 from wsgiref.validate import validator
-from flask import Flask, render_template,request, flash
+from flask import Flask, jsonify, render_template,request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 from flask_wtf import FlaskForm 
 from wtforms import StringField , SubmitField
 from wtforms.validators import DataRequired 
+from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash
 import json
  
 # Create a Flask Instance 
@@ -13,13 +15,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "What is my secrete key?"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/Flask'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-# app.config['MYSQL_HOST'] = 'localhost'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_DB'] = 'flask'
+db = SQLAlchemy(app) 
+migrate = Migrate(app, db)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_DB'] = 'flask'
  
-# mysql = MySQL(app)
+mysql = MySQL(app)
 
 # create Modal
 class Users(db.Model):
@@ -83,7 +86,6 @@ def name():
     if form.validate_on_submit():
         user = Users.query.filter_by(email = form.email.data).first()
         if user is None:
-            print("Here")
             user = Users(name=form.name.data,email=form.email.data)
             db.session.add(user)
             db.session.commit()
@@ -135,6 +137,55 @@ def update(id):
         data_update = data_update,
         )
 
+@app.route('/user_update',methods=['GET','POST'])
+def user_update():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        print(name," ---",email)
+        flash("Hello there we are somethig {}".format(name))
+        return render_template('user_form.html')
+    else:
+        flash("Direct call")
+        return render_template('user_form.html')
+
+@app.route('/delete/<id>',methods=['GET','POST'])
+def delete(id):
+    delete_form = UserForm()
+
+    if request.method == "GET" or request.method == "POST":
+        print(id,"---")
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute(''' Delete from users where id = (%d) ''',(id))
+            mysql.connection.commit()
+            flash("User Deleted Successfully.")
+            
+        except Exception as e:
+            
+            flash(e)
+        
+        finally:
+            all_users = Users.query.order_by(Users.date_added)
+    
+
+            return render_template('name.html',
+            form =delete_form,
+            all_users = all_users
+            )
+
+       
+        
+    else:
+        print(id,"Delete")
+        all_users = Users.query.order_by(Users.date_added)
+    
+
+        return render_template('name.html',
+        form =delete_form,
+        all_users = all_users
+        )
+   
 
 @app.route('/testing')
 def test():
