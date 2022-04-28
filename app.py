@@ -1,13 +1,16 @@
 from datetime import datetime
+from email import message
+from lib2to3.pgen2.token import EQUAL
+import queue
 from wsgiref.validate import validator
 from flask import Flask, jsonify, render_template,request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 from flask_wtf import FlaskForm 
-from wtforms import StringField , SubmitField
-from wtforms.validators import DataRequired 
+from wtforms import StringField , SubmitField, PasswordField, BooleanField
+from wtforms.validators import DataRequired , EqualTo
 from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash , check_password_hash
 import json
  
 # Create a Flask Instance 
@@ -30,6 +33,16 @@ class Users(db.Model):
     name = db.Column(db.String(200),nullable = False)
     email = db.Column(db.String(120), nullable = False,unique = True)
     date_added = db.Column(db.DateTime , default = datetime.utcnow)
+    password = db.Column(db.String(120), nullable = False)
+    # password2 = db.Column(db.String(120), nullable = False)
+
+
+    # @property
+    # def password(self):
+    #     raise AttributeError('Password ')
+
+    
+
 
     # Create a return ref
     def __repr__(self):
@@ -39,6 +52,9 @@ class Users(db.Model):
 class UserForm(FlaskForm):
     name = StringField("Name", validators = [DataRequired()])
     email = StringField("Email", validators = [DataRequired()])
+    password = PasswordField("Password", validators = [DataRequired(), EqualTo('password2', message="Password should be same")])
+    password2 = PasswordField("Confirm Password", validators = [DataRequired()])
+
     submit = SubmitField("Submit")
 
 @app.route('/')
@@ -54,22 +70,44 @@ def index():
     #     return "Alredy there table"
     return render_template('index.html')
 
-@app.route('/login')
+@app.route('/login',methods=["GET","POST"])
 def login():
     # if request.method == 'GET':
     #     return "Login via the login Form"
     
-    if request.method == 'GET':
-        data = request.args # ['id']
-        # print("Data ---",data['id'])
-        id = data['id']
-        name = data['name']
-        print("Name",name ,' ID',id)
-        cursor = mysql.connection.cursor()
-        cursor.execute('''INSERT INTO todo VALUES(%s,%s)''',(id,name))
-        mysql.connection.commit()
-        cursor.close()
-        return f"Done"
+    # if request.method == 'GET':
+    #     data = request.args # ['id']
+    #     # print("Data ---",data['id'])
+    #     id = data['id']
+    #     name = data['name']
+    #     print("Name",name ,' ID',id)
+    #     cursor = mysql.connection.cursor()
+    #     cursor.execute('''INSERT INTO todo VALUES(%s,%s)''',(id,name))
+    #     mysql.connection.commit()
+    #     cursor.close()
+    #     return f"Done"
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        form = UserForm()
+        # hash_password = 
+        user = Users.query.filter_by(email = email).first()
+        if user:
+            if check_password_hash(user.password,password) == True:
+                flash("We found the User congo")
+                return render_template('name.html',form=form)
+            else:
+                flash("Wrong Password ")
+                return render_template('user_form.html')
+
+        else:
+            flash("No user found!")
+            return render_template('user_form.html')
+    else:
+        flash("Direct call")
+        return render_template('user_form.html')
+
+
 
 
 
@@ -86,7 +124,8 @@ def name():
     if form.validate_on_submit():
         user = Users.query.filter_by(email = form.email.data).first()
         if user is None:
-            user = Users(name=form.name.data,email=form.email.data)
+            password = generate_password_hash(form.password.data)
+            user = Users(name=form.name.data,email=form.email.data,password=password)
             db.session.add(user)
             db.session.commit()
             flash("User Added Successfully!")
@@ -157,7 +196,8 @@ def delete(id):
         print(id,"---")
         try:
             cursor = mysql.connection.cursor()
-            cursor.execute(''' Delete from users where id = (%d) ''',(id))
+            query = "Delete from users where id = {} ".format(id)
+            cursor.execute(query)
             mysql.connection.commit()
             flash("User Deleted Successfully.")
             

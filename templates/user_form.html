@@ -25,9 +25,9 @@
 
     {% else %}
     <div class="shadow p-3 mb-5 bg-white rounded">Add User</div>
-         <form action="{{ url_for('user_update') }}" method="POST" >
-            <input type="text" value="name" name="name" id="name" class="form-label">
-            <input type="text" value="emal" name="email" id="email" class="form-label">
+         <form action="{{ url_for('login') }}" method="POST" >
+            <input type="text" value="email" name="email" id="email" class="form-label">
+            <input type="password" value="password" name="password" id="email" class="form-label">
             <button type="submit">Submit</button>
          </form>
 
@@ -44,7 +44,7 @@
 
     <!-- <h1>Hello World</h1> -->
     
-    <div class="shadow p-3 mb-5 bg-white rounded">User List</div>
+    
 
     <!-- <table class="table table-dark">
         <thead>
