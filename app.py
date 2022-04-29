@@ -1,9 +1,5 @@
 from datetime import datetime
-from email import message
-from lib2to3.pgen2.token import EQUAL
-import queue
-from wsgiref.validate import validator
-from flask import Flask, jsonify, render_template,request, flash
+from flask import Flask, jsonify, render_template,request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 from flask_wtf import FlaskForm 
@@ -12,6 +8,7 @@ from wtforms.validators import DataRequired , EqualTo
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash , check_password_hash
 import json
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
  
 # Create a Flask Instance 
 app = Flask(__name__)
@@ -24,11 +21,20 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'flask'
- 
+
 mysql = MySQL(app)
 
+# Flask login 
+
+login_manger = LoginManager()
+login_manger.init_app(app)
+login_manger.login_view = 'login'
+
+@login_manger.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 # create Modal
-class Users(db.Model):
+class Users(db.Model,UserMixin):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(200),nullable = False)
     email = db.Column(db.String(120), nullable = False,unique = True)
@@ -94,8 +100,9 @@ def login():
         user = Users.query.filter_by(email = email).first()
         if user:
             if check_password_hash(user.password,password) == True:
+                login_user(user)
                 flash("We found the User congo")
-                return render_template('name.html',form=form)
+                return redirect(url_for('name'))
             else:
                 flash("Wrong Password ")
                 return render_template('user_form.html')
@@ -109,7 +116,12 @@ def login():
 
 
 
-
+@app.route('/logout',methods=['GET','POST'])
+@login_required
+def logout():
+    logout_user()
+    flash("Logged out successully...")
+    return redirect(url_for('login'))
 
 @app.route('/user/<name>')
 def user(name):
@@ -117,6 +129,7 @@ def user(name):
     return render_template('user.html',name=name)
 
 @app.route('/name',methods=['GET','POST'])
+@login_required
 def name():
     name = None
     form = UserForm()

@@ -17,13 +17,7 @@
 
 
 
-    {% if name   %}
-
-    <h1  id="name1" name="name1">Hello {{ name|upper }}!</h1>
-    <!-- <h1  id="name1" name="name1">Hello {{ email|upper }}!</h1> -->
-
-
-    {% else %}
+  
     <div class="shadow p-3 mb-5 bg-white rounded">Add User</div>
          <form action="{{ url_for('login') }}" method="POST" >
             <input type="text" value="email" name="email" id="email" class="form-label">
@@ -31,37 +25,7 @@
             <button type="submit">Submit</button>
          </form>
 
-    {% endif %}
+   
 
-
-    <!-- <form method="get" onsubmit="/register">
-        
-        <input type="text" id="id" name="id">
-        <br>
-        <input type="text" id="name" name="name">
-        <button type="submit">Submit</button>
-    </form> -->
-
-    <!-- <h1>Hello World</h1> -->
-    
-    
-
-    <!-- <table class="table table-dark">
-        <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-            </tr>
-          </thead>
-        {% for user in all_users %}
-        <tr>
-            <th scope="row">{{ user.id }}</th>
-            <td><a href="{{ url_for('update',id = user.id) }}">{{ user.name }}</a></td>
-            <td> {{ user.email }}</td>
-        </tr>
-        {% endfor %}
-
-    </table> -->
 {% endblock %}
 
