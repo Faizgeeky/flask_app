@@ -32,3 +32,13 @@ $ git init
    {% extend 'base.html' %}
    {% block content %}
    {% endblock %}
+
+// Migration
+in app.py
+from flask_migrate import Migrate
+migrate = Migrate(app, db)
+
+
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade
